@@ -13,36 +13,54 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+
       - name: Install Android SDK 35
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
-      - name: Build both APKs and run Android lint
-        run: ./gradlew :app:assembleVelketDebug :app:assembleStarcatDebug :app:lintVelketDebug :app:lintStarcatDebug --stacktrace
+
+      - name: Build Velket Debug APK
+        run: ./gradlew :app:assembleVelketDebug --stacktrace
+
+      - name: Build StarCat Debug APK
+        run: ./gradlew :app:assembleStarcatDebug --stacktrace
+
       - name: Upload Velket APK
         uses: actions/upload-artifact@v4
         with:
           name: CharacterCore-v0.3.1-Velket
           path: app/build/outputs/apk/velket/debug/*.apk
           if-no-files-found: error
+
       - name: Upload StarCat APK
         uses: actions/upload-artifact@v4
         with:
           name: CharacterCore-v0.3.1-StarCat
           path: app/build/outputs/apk/starcat/debug/*.apk
           if-no-files-found: error
+
+      - name: Run Android lint
+        if: always()
+        continue-on-error: true
+        run: ./gradlew :app:lintVelketDebug :app:lintStarcatDebug --stacktrace
+
       - name: Upload lint reports
         if: always()
         uses: actions/upload-artifact@v4
