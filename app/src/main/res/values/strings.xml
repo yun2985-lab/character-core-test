@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Character Core Dual</string>
+    <string name="character_name">캐릭터</string>
+    <string name="wallpaper_description">Character Core v0.3.1 라이브 배경화면</string>
+    <string name="wallpaper_name">@string/app_name</string>
+</resources>
